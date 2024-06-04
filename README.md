@@ -1,0 +1,1 @@
+Автотестоы сервиса https://qa-scooter.praktikum-services.ru
