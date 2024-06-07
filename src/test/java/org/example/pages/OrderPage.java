@@ -3,6 +3,7 @@ package org.example.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -10,7 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.example.urils.Constants.BASE_WAIT;
-import static org.example.urils.Waiters.waitForElementToBeClickable;
+import static org.example.urils.Waiters.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -55,7 +56,15 @@ public class OrderPage {
     }
 
     public void setMetro(String metro) {
-        driver.findElement(this.metro).click();
+        By metroStation = By.xpath(".//div[text()='" + metro + "']");
+        WebElement element = driver.findElement(this.metro);
+        element.click();
+
+        waitForVisibilityOfElementLocated(driver, By.xpath(".//div[@class='select-search__select']"), BASE_WAIT);
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].scrollIntoView();", driver.findElement(metroStation));
+
         driver.findElement(By.xpath(".//div[text()='" + metro + "']")).click();
     }
 
@@ -113,13 +122,17 @@ public class OrderPage {
     }
 
     public void checkProcessedDescription() {
+        Pattern orderNumberPattern = Pattern.compile("Номер заказа: (\\d+)");
+
         waitForElementToBeClickable(driver, processedTitle, BASE_WAIT);
+        waitByTextMatches(driver, processedDescription, BASE_WAIT, orderNumberPattern);
+//        wait.until(ExpectedConditions.textMatches(processedDescription, Pattern.compile("Номер заказа: (\\d+)")));
 
         String description = driver.findElement(processedDescription).getText();
-        Pattern pattern = Pattern.compile("Номер заказа: (\\d+)");
-        Matcher matcher = pattern.matcher(description);
+//        Pattern pattern = Pattern.compile("Номер заказа: (\\d+)");
+        Matcher matcher = orderNumberPattern.matcher(description);
 
-        assertTrue("Номер заказа не найден", matcher.find());
+        assertTrue("Заказ не создан, так как не отображен в описании.", matcher.find());
     }
 
     public void clickOrderConfirmButton() {

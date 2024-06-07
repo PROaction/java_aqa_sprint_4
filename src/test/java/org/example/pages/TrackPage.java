@@ -6,8 +6,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static org.example.urils.Constants.BASE_URL;
-import static org.example.urils.Constants.BASE_WAIT;
+import static org.example.urils.Constants.*;
+import static org.example.urils.Waiters.waitForURLMatches;
 import static org.example.urils.Waiters.waitForVisibilityOfElementLocated;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -103,7 +103,10 @@ public class TrackPage extends BasePage {
     public void checkOrderData(String firstName, String lastName, String address, String metro,
                                String telephone, String deliveryDay, String rentalPeriod,
                                String color, String comment) {
-        waitForVisibilityOfElementLocated(driver, this.firstName, BASE_WAIT);
+        String urlRegex = "https:\\/\\/qa-scooter\\.paktikum-services.ru\\/track.*";
+        System.out.println(urlRegex);
+        waitForURLMatches(driver, urlRegex, 15);
+        waitForVisibilityOfElementLocated(driver, this.firstName, 15);
 
         assertEquals(getFirstName(), firstName);
         assertEquals(getLastName(), lastName);

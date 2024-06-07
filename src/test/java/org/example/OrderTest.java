@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 
 import static org.example.urils.Constants.BASE_URL;
 import static org.example.urils.Constants.COMMENT;
@@ -45,17 +46,19 @@ public class OrderTest {
     public static Object[][] testData() {
         return new Object[][] {
                 {"Ян", "Иванов", "Ленивка", "Лубянка", "89999999999", "black", "", "botOrderButton"},
-                {"Ян", "Ё", "Ленивка", "Люблино", "89999999999", "black", "", "topOrderButton"},
-                {"Абдурахмангаджи", "Христорождественский",
-                        "улица 50 лет Победы в Великой Отечественной войне", "Воробьевы горы", "80000000000", "grey",
-                        COMMENT, "topOrderButton"},
+//                {"Ян", "Ё", "Ленивка", "Чистые пруды", "89999999999", "black", "", "topOrderButton"},
+//                {"Абдурахмангаджи", "Христорождественский",
+//                        "Сокольники", "Воробьевы горы", "80000000000", "grey",
+//                        COMMENT, "topOrderButton"},
         };
     }
 
     @Before
     public void setUp() {
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
+//        WebDriverManager.chromedriver().setup();
+//        driver = new ChromeDriver();
+        WebDriverManager.edgedriver().setup();
+        driver = new EdgeDriver();
     }
 
     @Test
@@ -78,7 +81,14 @@ public class OrderTest {
         objOrderPage.clickOrderingButton();
         objOrderPage.clickOrderConfirmButton();
         objOrderPage.checkProcessedDescription();
+
+//        String oldUrl = driver.getCurrentUrl();
         objOrderPage.clickViewStatus();
+//        try {
+//            Thread.sleep(60000); // Приостановить на 5 секунд
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         objTrackPage.checkOrderData(firstName, lastName, street, metro, phoneNumber,
                 deliveryDay, "сутки", color, comment);

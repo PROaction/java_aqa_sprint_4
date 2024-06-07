@@ -2,8 +2,11 @@ package org.example.urils;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.regex.Pattern;
 
 public class Waiters {
     public static void waitForElementToBeClickable(WebDriver driver, By locator, int timeout) {
@@ -15,4 +18,26 @@ public class Waiters {
         new WebDriverWait(driver, timeout)
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
+
+    public static void waitByTextMatches(WebDriver driver, By locator, int timeout, Pattern pattern) {
+        new WebDriverWait(driver, timeout)
+                .until(ExpectedConditions.textMatches(locator, pattern));
+    }
+
+    public static void waitForURLMatches(WebDriver driver, String urlRegex, int timeout) {
+        new WebDriverWait(driver, timeout)
+                .until(ExpectedConditions.urlMatches(urlRegex));
+    }
+
+//    public static void waitForURLChange(WebDriver driver, String oldUrl, int timeout) {
+//        WebDriverWait wait = new WebDriverWait(driver, timeout);
+//        ExpectedCondition<Boolean> urlChange = new ExpectedCondition<Boolean>() {
+//            @Override
+//            public Boolean apply(WebDriver driver) {
+//                String currentUrl = driver.getCurrentUrl();
+//                return !currentUrl.equals(oldUrl);
+//            }
+//        };
+//        wait.until(urlChange);
+//    }
 }
