@@ -28,16 +28,4 @@ public class Waiters {
         new WebDriverWait(driver, timeout)
                 .until(ExpectedConditions.urlMatches(urlRegex));
     }
-
-//    public static void waitForURLChange(WebDriver driver, String oldUrl, int timeout) {
-//        WebDriverWait wait = new WebDriverWait(driver, timeout);
-//        ExpectedCondition<Boolean> urlChange = new ExpectedCondition<Boolean>() {
-//            @Override
-//            public Boolean apply(WebDriver driver) {
-//                String currentUrl = driver.getCurrentUrl();
-//                return !currentUrl.equals(oldUrl);
-//            }
-//        };
-//        wait.until(urlChange);
-//    }
 }

@@ -4,8 +4,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.example.urils.Constants.BASE_WAIT;
 import static org.example.urils.Waiters.waitForElementToBeClickable;
@@ -20,7 +18,7 @@ public class HomePage {
     private final By topOrderButton =
             By.xpath(".//div[@class='Header_Nav__AGCXC']/button[text()='Заказать']");
     private final By botOrderButton = By.xpath(".//div[@class='Home_FinishButton__1_cWm']/button");
-    private final By orderStatus = By.xpath(".//button[text()='Статус заказа'");
+    private final By orderStatusButton = By.xpath(".//button[text()='Статус заказа']");
     private final By orderNumberField = By.xpath(".//input[@placeholder='Введите номер заказа']");
     private final By goButton = By.xpath(".//button[text()='Go!']");
 
@@ -55,7 +53,7 @@ public class HomePage {
     }
 
     public void clickOrderStatus() {
-        driver.findElement(orderStatus).click();
+        driver.findElement(orderStatusButton).click();
     }
 
     public void setOrderNumberField(String orderNumber) {
@@ -68,8 +66,6 @@ public class HomePage {
 
 
     public void checkAnswer(int index, String answer) {
-//        new WebDriverWait(driver, 5)
-//                .until(ExpectedConditions.elementToBeClickable(By.id("accordion__heading-" + index)));
         By answerElement = By.id("accordion__heading-" + index);
         waitForElementToBeClickable(driver, answerElement, BASE_WAIT);
 
@@ -87,8 +83,13 @@ public class HomePage {
     }
 
     public void goToOrderPage(String orderNumber) {
+        waitForElementToBeClickable(driver, orderStatusButton, BASE_WAIT);
         clickOrderStatus();
+
+        waitForElementToBeClickable(driver, orderNumberField, BASE_WAIT);
         setOrderNumberField(orderNumber);
+        System.out.println(orderNumber);
+
         clickGo();
     }
 }

@@ -1,18 +1,16 @@
 package org.example.pages;
 
+import org.example.models.ColorCheckbox;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.example.urils.Constants.BASE_WAIT;
 import static org.example.urils.Waiters.*;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class OrderPage {
@@ -33,7 +31,6 @@ public class OrderPage {
     private final By comment = By.xpath(".//input[contains(@placeholder, 'Комментарий')]");
     private final By orderingButton =
             By.xpath(".//div[@class='Order_Buttons__1xGrp']/button[text()='Заказать']");
-    private final By confirmTitle = By.xpath(".//div[text()='Хотите оформить заказ?']");
     private final By orderConfirmButton = By.xpath(".//div[@class='Order_Modal__YZ-d3']//button[text()='Да']");
     private final By processedTitle = By.xpath(".//div[text()='Заказ оформлен']");
     private final By processedDescription = By.className("Order_Text__2broi");
@@ -62,9 +59,6 @@ public class OrderPage {
 
         waitForVisibilityOfElementLocated(driver, By.xpath(".//div[@class='select-search__select']"), BASE_WAIT);
 
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].scrollIntoView();", driver.findElement(metroStation));
-
         driver.findElement(By.xpath(".//div[text()='" + metro + "']")).click();
     }
 
@@ -76,11 +70,14 @@ public class OrderPage {
         driver.findElement(whenDelivery).click();
     }
 
+    /**
+     * @return строка состоящая из дня и месяца (например, 5 июня)
+     */
     public String getDeliveryDay() {
-        String deliveryDate = driver.findElement(deliveryDay).getAttribute("aria-disabled");
-        System.out.println(deliveryDate);
-        
-        Pattern pattern = Pattern.compile("(\\d+)-е (\\w+)");
+
+        String deliveryDate = driver.findElement(deliveryDay).getAttribute("aria-label");
+
+        Pattern pattern = Pattern.compile("(\\d+)-е ([а-я]+)");
         Matcher matcher = pattern.matcher(deliveryDate);
         
         String result = null;
@@ -89,6 +86,7 @@ public class OrderPage {
             String month = matcher.group(2);
             result = day + " " + month;
         }
+
         return result;
     }
 
@@ -104,8 +102,8 @@ public class OrderPage {
         driver.findElement(dayPeriod).click();
     }
 
-    public void setColor(String color) {
-        driver.findElement(By.id(color)).click();
+    public void setColor(ColorCheckbox color) {
+        driver.findElement(By.id(color.getId())).click();
     }
 
     public void setComment(String comment) {
@@ -126,10 +124,8 @@ public class OrderPage {
 
         waitForElementToBeClickable(driver, processedTitle, BASE_WAIT);
         waitByTextMatches(driver, processedDescription, BASE_WAIT, orderNumberPattern);
-//        wait.until(ExpectedConditions.textMatches(processedDescription, Pattern.compile("Номер заказа: (\\d+)")));
 
         String description = driver.findElement(processedDescription).getText();
-//        Pattern pattern = Pattern.compile("Номер заказа: (\\d+)");
         Matcher matcher = orderNumberPattern.matcher(description);
 
         assertTrue("Заказ не создан, так как не отображен в описании.", matcher.find());
@@ -149,7 +145,7 @@ public class OrderPage {
         setTelephone(telephone);
     }
 
-    public String setSecondPage(String color, String comment) {
+    public String setSecondPage(ColorCheckbox color, String comment) {
         waitForElementToBeClickable(driver, this.whenDelivery, BASE_WAIT);
         clickWhenDelivery();
         String deliveryDay = getDeliveryDay();

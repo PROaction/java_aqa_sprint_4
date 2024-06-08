@@ -1,19 +1,19 @@
 package org.example.pages;
 
+import org.example.models.ColorCheckbox;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
 
 import static org.example.urils.Constants.*;
-import static org.example.urils.Waiters.waitForURLMatches;
 import static org.example.urils.Waiters.waitForVisibilityOfElementLocated;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TrackPage extends BasePage {
-    private WebDriver driver;
 
     private final String baseXpath = ".//div[@class='Track_Row__1sN1F']";
 
@@ -73,7 +73,14 @@ public class TrackPage extends BasePage {
     }
 
     public String getComment() {
-        return driver.findElement(comment).getText();
+        List<WebElement> elements = driver.findElements(comment);
+
+        // если комментарий не заполнен при создании заказа
+        if (elements.isEmpty()) {
+            return "";
+        } else {
+            return elements.get(0).getText();
+        }
     }
 
     public String getOrderNumber() {
@@ -97,16 +104,19 @@ public class TrackPage extends BasePage {
     }
 
     public void isNotFoundOrder() {
+        // ожидание, так как сначала появлся сообщение, что заказ не найден, а затем заказ открывается
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         assertTrue(driver.findElement(notFoundImg).isDisplayed());
     }
 
     public void checkOrderData(String firstName, String lastName, String address, String metro,
                                String telephone, String deliveryDay, String rentalPeriod,
-                               String color, String comment) {
-        String urlRegex = "https:\\/\\/qa-scooter\\.paktikum-services.ru\\/track.*";
-        System.out.println(urlRegex);
-        waitForURLMatches(driver, urlRegex, 15);
-        waitForVisibilityOfElementLocated(driver, this.firstName, 15);
+                               ColorCheckbox color, String comment) {
+        waitForVisibilityOfElementLocated(driver, this.firstName, BASE_WAIT);
 
         assertEquals(getFirstName(), firstName);
         assertEquals(getLastName(), lastName);
@@ -115,8 +125,14 @@ public class TrackPage extends BasePage {
         assertEquals(getTelephone(), telephone);
         assertEquals(getDeliveryDay(), deliveryDay);
         assertEquals(getRentalPeriod(), rentalPeriod);
-        assertEquals(getColor(), color);
-        assertEquals(getComment(), comment);
+        assertEquals(getColor(), color.getValue());
+
+        // если комменатрий не заполнялся
+        if (comment.isEmpty()) {
+            assertTrue(getComment().isEmpty());
+        } else {
+            assertEquals(getComment(), comment);
+        }
     }
 
     public void cancelOrder() {
