@@ -3,8 +3,7 @@ package org.example.urils;
 public class Constants {
     private Constants() {}
 
-    public static final String BASE_URL = "https://qa-scooter.praktikum-services.ru";
-    public static final String TRACK_URL = "/track";
+    public static final String BASE_URL = "https://qa-scooter.praktikum-services.ru/";
     public static final int BASE_WAIT = 3;
     public static final String COMMENT = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, " +
             "sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. " +
